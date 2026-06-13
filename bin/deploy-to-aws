@@ -1,0 +1,33 @@
+#!/bin/bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+: "${EC2_IP:?Set EC2_IP}"
+: "${SSH_KEY:?Set SSH_KEY}"
+: "${DOCKER_USERNAME:?Set DOCKER_USERNAME}"
+: "${KAMAL_REGISTRY_PASSWORD:?Set KAMAL_REGISTRY_PASSWORD}"
+
+SSH_KEY="${SSH_KEY/#\~/$HOME}"
+chmod 400 "$SSH_KEY"
+
+DEPLOY_CONFIG="$(mktemp /tmp/kamal-deploy.XXXXXX.yml)"
+trap 'rm -f "$DEPLOY_CONFIG"' EXIT
+
+sed \
+  -e "s/REPLACE_WITH_EC2_PUBLIC_IP/$EC2_IP/" \
+  -e "s|REPLACE_WITH_SSH_KEY_PATH|$SSH_KEY|" \
+  -e "s/REPLACE_WITH_DOCKER_USERNAME/$DOCKER_USERNAME/g" \
+  config/deploy.yml > "$DEPLOY_CONFIG"
+
+echo "$KAMAL_REGISTRY_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+if ! ssh -i "$SSH_KEY" ubuntu@"$EC2_IP" "docker --version" >/dev/null 2>&1; then
+  scp -i "$SSH_KEY" scripts/setup-ec2-server.sh ubuntu@"$EC2_IP":~/setup-ec2-server.sh
+  ssh -i "$SSH_KEY" ubuntu@"$EC2_IP" "bash ~/setup-ec2-server.sh"
+fi
+
+bin/kamal setup -c "$DEPLOY_CONFIG"
+bin/kamal deploy -c "$DEPLOY_CONFIG"
+
+echo "http://$EC2_IP"
