@@ -1,6 +1,6 @@
 # Everybody Loves Merch
 
-Online store built with Rails for CSEN 164. Users can browse products, add items to a cart, place orders, and write reviews. Admins can manage products and categories.
+Online store for buying ELR merch, just some. You like Raymond? Maybe not the character, but the show? Check this out. Users can browse products, add items to a cart, place orders, and write reviews. Better yet, admins can manage products and categories.
 
 ## Features
 
@@ -34,11 +34,7 @@ Open http://localhost:3000
 
 ## Login
 
-| Role  | Email               | Password    |
-|-------|---------------------|-------------|
-| Admin | admin@c164store.com | password123 |
-| User  | alice@example.com   | password123 |
-| User  | bob@example.com     | password123 |
+Example: email: idiot@gmail.com, password: iamadumbass1192
 
 ## Live site
 
@@ -46,4 +42,6 @@ http://18.225.222.28
 
 ## Deploy
 
-Uses Kamal + Docker. Set `EC2_IP`, `SSH_KEY`, `DOCKER_USERNAME`, and `KAMAL_REGISTRY_PASSWORD`, then run `bin/deploy-to-aws`.
+Uses Kamal + Docker. Set `EC2_IP`, `SSH_KEY`, `DOCKER_USERNAME`, and `KAMAL_REGISTRY_PASSWORD`, then run `bin/deploy-to-aws`. 
+]
+If there are any issues, bring them up after the final day of the quarter and I'll get back to you within one non-summer business day.
