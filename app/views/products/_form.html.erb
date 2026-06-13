@@ -1,0 +1,50 @@
+<div class="page-header">
+  <h1><%= @product.new_record? ? "New Product" : "Edit Product" %></h1>
+</div>
+
+<%= form_with model: @product, local: true, class: "form form-wide" do |f| %>
+  <% if @product.errors.any? %>
+    <div class="flash flash-alert" style="margin-bottom: 1rem;">
+      <ul style="margin: 0; padding-left: 1.25rem;">
+        <% @product.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= f.label :name %>
+    <%= f.text_field :name, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :description %>
+    <%= f.text_area :description, rows: 4, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :price %>
+    <%= f.number_field :price, step: 0.01, min: 0, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :stock %>
+    <%= f.number_field :stock, min: 0, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :image_url, "Image URL" %>
+    <%= f.url_field :image_url, class: "form-control", placeholder: "/images/products/example.png" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :category_id, "Category" %>
+    <%= f.collection_select :category_id, @categories, :id, :name, {}, class: "form-control" %>
+  </div>
+
+  <div style="display: flex; gap: 0.75rem;">
+    <%= f.submit class: "btn btn-primary" %>
+    <%= link_to "Cancel", products_path, class: "btn btn-link" %>
+  </div>
+<% end %>

@@ -1,0 +1,42 @@
+<div class="page-header" style="text-align: center;">
+  <h1>Create account</h1>
+  <p>Join C164 Store today</p>
+</div>
+
+<div class="auth-card">
+  <%= form_with model: @user, url: users_path, local: true, class: "form" do |f| %>
+    <% if @user.errors.any? %>
+      <div class="flash flash-alert" style="margin-bottom: 1rem;">
+        <ul style="margin: 0; padding-left: 1.25rem;">
+          <% @user.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="form-group">
+      <%= f.label :name %>
+      <%= f.text_field :name, class: "form-control", placeholder: "Your name" %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :email %>
+      <%= f.email_field :email, class: "form-control", placeholder: "you@example.com" %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :password %>
+      <%= f.password_field :password, class: "form-control", placeholder: "Min. 6 characters" %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :password_confirmation, "Confirm password" %>
+      <%= f.password_field :password_confirmation, class: "form-control" %>
+    </div>
+
+    <%= f.submit "Create Account", class: "btn btn-primary", style: "width: 100%;" %>
+  <% end %>
+
+  <p class="form-footer">Already have an account? <%= link_to "Log in", login_path %></p>
+</div>

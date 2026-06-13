@@ -1,0 +1,23 @@
+<div class="product-card">
+  <%= link_to product, class: "product-card-image-wrap" do %>
+    <% if product.image_url.present? %>
+      <img src="<%= product.image_url %>" alt="<%= product.name %>" class="product-image">
+    <% end %>
+  <% end %>
+  <div class="product-card-body">
+    <span class="category-tag"><%= product.category.name %></span>
+    <h3><%= link_to product.name, product %></h3>
+    <% if local_assigns[:show_description] %>
+      <p class="small muted"><%= truncate(product.description, length: 72) %></p>
+    <% end %>
+    <p class="small rating-text"><%= average_stars(product) %></p>
+    <div class="product-card-meta">
+      <span class="product-price"><%= format_price(product.price) %></span>
+      <% if product.in_stock? %>
+        <span class="badge badge-in-stock">In stock</span>
+      <% else %>
+        <span class="badge badge-out-of-stock">Sold out</span>
+      <% end %>
+    </div>
+  </div>
+</div>

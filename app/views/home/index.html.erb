@@ -1,0 +1,28 @@
+<div class="hero">
+  <h1>Everybody Loves Merch</h1>
+  <p>Check out some cool ELR merch! Or something.</p>
+  <%= link_to "Shop the Collection", products_path, class: "btn btn-primary" %>
+</div>
+
+<section class="section">
+  <div class="section-header">
+    <h2>Shop by Category</h2>
+  </div>
+  <div class="category-list">
+    <% @categories.each do |category| %>
+      <%= link_to category.name, products_path(category_id: category.id), class: "category-chip" %>
+    <% end %>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-header">
+    <h2>Featured Products</h2>
+    <%= link_to "View all", products_path, class: "section-link" %>
+  </div>
+  <div class="product-grid">
+    <% @featured_products.each do |product| %>
+      <%= render "products/product_card", product: product %>
+    <% end %>
+  </div>
+</section>

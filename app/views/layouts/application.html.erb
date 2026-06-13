@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title><%= content_for(:title) || "Everybody Loves Merch" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body>
+    <nav class="navbar">
+      <div class="nav-brand"><%= link_to "Everybody Loves Merch", root_path %></div>
+      <ul class="nav-links">
+        <li><%= link_to "Home", root_path %></li>
+        <li><%= link_to "Shop", products_path %></li>
+        <% if logged_in? %>
+          <li><%= link_to "Cart", cart_path %></li>
+          <li><%= link_to "Orders", orders_path %></li>
+          <% if current_user.admin? %>
+            <li><%= link_to "Categories", categories_path %></li>
+            <li><%= link_to "Add Product", new_product_path, class: "nav-cta" %></li>
+          <% end %>
+          <li><%= link_to current_user.name.split.first, user_path(current_user) %></li>
+          <li><%= button_to "Logout", logout_path, method: :delete, class: "link-button" %></li>
+        <% else %>
+          <li><%= link_to "Login", login_path %></li>
+          <li><%= link_to "Sign Up", signup_path, class: "nav-cta" %></li>
+        <% end %>
+      </ul>
+    </nav>
+
+    <% if flash[:notice] || flash[:alert] %>
+      <div class="flash-wrap">
+        <% if flash[:notice] %>
+          <div class="flash flash-notice"><%= flash[:notice] %></div>
+        <% end %>
+        <% if flash[:alert] %>
+          <div class="flash flash-alert"><%= flash[:alert] %></div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <main class="container">
+      <%= yield %>
+    </main>
+
+    <footer class="footer">
+      <p>Everybody Loves Merch &mdash; CSEN 164 Assignment #2</p>
+    </footer>
+  </body>
+</html>

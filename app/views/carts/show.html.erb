@@ -1,0 +1,48 @@
+<div class="page-header">
+  <h1>Shopping Cart</h1>
+  <p><%= @line_items.sum(&:quantity) %> items</p>
+</div>
+
+<% if @line_items.any? %>
+  <div class="card-table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Subtotal</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @line_items.each do |item| %>
+          <tr>
+            <td><%= link_to item.product.name, item.product %></td>
+            <td><%= format_price(item.product.price) %></td>
+            <td>
+              <%= form_with url: update_item_cart_path(item), method: :patch, local: true, class: "inline-form" do %>
+                <%= number_field_tag :quantity, item.quantity, min: 1, max: item.product.stock %>
+                <%= submit_tag "Update", class: "btn btn-secondary btn-sm" %>
+              <% end %>
+            </td>
+            <td><%= format_price(item.product.price * item.quantity) %></td>
+            <td>
+              <%= button_to "Remove", remove_item_cart_path(item), method: :delete, class: "btn btn-danger btn-sm" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="cart-summary">
+    <p class="cart-total">Total: <%= format_price(@cart.total) %></p>
+    <%= button_to "Checkout", orders_path, method: :post, class: "btn btn-primary", data: { turbo_confirm: "Place this order?" } %>
+  </div>
+<% else %>
+  <div class="empty-state">
+    <p>Your cart is empty.</p>
+    <%= link_to "Browse Products", products_path, class: "btn btn-primary" %>
+  </div>
+<% end %>

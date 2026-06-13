@@ -1,0 +1,93 @@
+<div class="product-detail">
+  <div class="product-detail-image-wrap">
+    <% if @product.image_url.present? %>
+      <img src="<%= @product.image_url %>" alt="<%= @product.name %>" class="product-detail-image">
+    <% end %>
+  </div>
+
+  <div class="product-detail-info">
+    <span class="category-tag"><%= @product.category.name %></span>
+    <h1><%= @product.name %></h1>
+    <p class="rating-text"><%= average_stars(@product) %></p>
+    <p class="price"><%= format_price(@product.price) %></p>
+    <% if @product.in_stock? %>
+      <span class="badge badge-in-stock"><%= @product.stock %> in stock</span>
+    <% else %>
+      <span class="badge badge-out-of-stock">Out of stock</span>
+    <% end %>
+    <div class="product-description"><%= simple_format(@product.description) %></div>
+
+    <% if logged_in? && @product.in_stock? %>
+      <%= form_with url: add_item_cart_path(@product), method: :post, local: true, class: "add-to-cart-form" do %>
+        <%= label_tag :quantity, "Qty" %>
+        <%= number_field_tag :quantity, 1, min: 1, max: @product.stock %>
+        <%= submit_tag "Add to Cart", class: "btn btn-primary" %>
+      <% end %>
+    <% elsif !logged_in? %>
+      <div class="login-prompt">
+        <%= link_to "Log in", login_path %> or <%= link_to "sign up", signup_path %> to add this to your cart.
+      </div>
+    <% end %>
+
+    <% if current_user&.admin? %>
+      <div class="admin-actions">
+        <%= link_to "Edit Product", edit_product_path(@product), class: "btn btn-secondary" %>
+        <%= button_to "Delete", @product, method: :delete, data: { turbo_confirm: "Are you sure?" }, class: "btn btn-danger" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<section class="reviews-section">
+  <h2>Customer Reviews</h2>
+
+  <% if logged_in? %>
+    <% existing_review = @product.reviews.find_by(user: current_user) %>
+    <% if existing_review %>
+      <p class="muted">You already reviewed this product. <%= link_to "Edit your review", edit_product_review_path(@product, existing_review) %></p>
+    <% else %>
+      <%= form_with model: [@product, @review], local: true, class: "review-form" do |f| %>
+        <div class="form-group">
+          <%= f.label :rating, "Rating" %>
+          <%= f.select :rating, (1..5).to_a, {}, class: "form-control" %>
+        </div>
+        <div class="form-group">
+          <%= f.label :comment, "Your review" %>
+          <%= f.text_area :comment, rows: 3, class: "form-control", placeholder: "Share your thoughts..." %>
+        </div>
+        <%= f.submit "Submit Review", class: "btn btn-primary" %>
+      <% end %>
+    <% end %>
+  <% else %>
+    <div class="login-prompt">
+      <%= link_to "Log in", login_path %> to write a review.
+    </div>
+  <% end %>
+
+  <% if @reviews.any? %>
+    <div class="review-list">
+      <% @reviews.each do |review| %>
+        <div class="review-card">
+          <div class="review-card-header">
+            <span class="review-author"><%= review.user.name %></span>
+            <%= star_rating(review.rating) %>
+          </div>
+          <p class="review-comment"><%= review.comment %></p>
+          <p class="small muted"><%= review.created_at.strftime("%B %d, %Y") %></p>
+          <% if logged_in? && review.user_id == current_user.id %>
+            <div class="review-actions">
+              <%= link_to "Edit", edit_product_review_path(@product, review) %>
+              <%= button_to "Delete", product_review_path(@product, review), method: :delete, data: { turbo_confirm: "Delete this review?" }, class: "link-button" %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="empty-state">
+      <p>No reviews yet — be the first!</p>
+    </div>
+  <% end %>
+</section>
+
+<%= link_to "← Back to shop", products_path, class: "back-link" %>

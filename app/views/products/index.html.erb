@@ -1,0 +1,36 @@
+<div class="page-header">
+  <h1>Shop All Products</h1>
+  <p><%= @products.size %> items available</p>
+</div>
+
+<div class="filter-bar">
+  <%= form_with url: products_path, method: :get, local: true, class: "filter-form" do %>
+    <div class="form-row">
+      <%= text_field_tag :search, params[:search], placeholder: "Search products..." %>
+      <%= select_tag :category_id,
+            options_from_collection_for_select(@categories, :id, :name, params[:category_id]),
+            include_blank: "All Categories" %>
+      <%= submit_tag "Search", class: "btn btn-primary" %>
+      <%= link_to "Clear", products_path, class: "btn btn-link" %>
+    </div>
+  <% end %>
+</div>
+
+<% if current_user&.admin? %>
+  <div class="toolbar">
+    <%= link_to "Add New Product", new_product_path, class: "btn btn-primary" %>
+  </div>
+<% end %>
+
+<% if @products.any? %>
+  <div class="product-grid">
+    <% @products.each do |product| %>
+      <%= render "products/product_card", product: product, show_description: true %>
+    <% end %>
+  </div>
+<% else %>
+  <div class="empty-state">
+    <p>No products match your search.</p>
+    <%= link_to "View all products", products_path, class: "btn btn-secondary" %>
+  </div>
+<% end %>

@@ -1,0 +1,14 @@
+<div class="page-header">
+  <h1>My Profile</h1>
+</div>
+
+<div class="profile-card">
+  <p><strong>Name</strong> <%= @user.name %></p>
+  <p><strong>Email</strong> <%= @user.email %></p>
+  <p><strong>Role</strong> <%= @user.admin? ? "Admin" : "Customer" %></p>
+</div>
+
+<div style="margin-top: 1.5rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
+  <%= link_to "My Orders", orders_path, class: "btn btn-secondary" %>
+  <%= link_to "Shop Products", products_path, class: "btn btn-primary" %>
+</div>
